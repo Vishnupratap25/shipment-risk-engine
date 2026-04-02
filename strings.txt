@@ -1,0 +1,97 @@
+Enterprise Shipment Control Tower
+wide
+__main__
+shipment_model.pkl
+rb
+lat
+lon
+Trk Nos
+BSO_CD
+commit_status
+IST_svc_commit_tmstp
+coerce
+IST_svc_commit_dt
+commit_hour
+commit_day
+commit_month
+commit_dayofweek
+commit_is_weekend
+_
+Station_Day_Cross
+Automated strategic oversight, real-time SLA tactical monitoring, and AI root-cause analysis.
+Waiting for Model... error: 
+.tsv
+	
+AI analyzing risk probabilities...
+Risk_Percentage
+Risk_Category
+BSO_CD
+E|N
+North Explorer
+South Vanguard
+Region
+Executive Strategic Overview
+Total Shipments
+,
+High Risk Population
+.1f
+%
+Medium Risk Population
+Predicted Breaches (>50%)
+City name
+Top 10 High Risk Cities
+Trk Nos
+High_Risk
+Avg_Risk
+Highest Concentration of Critical Failures
+Reds
+lat
+lon
+: 
+ High Risk Shipments
+red
+' currently exhibits an average breach risk of **
+%** across its 
+Total_Shipments
+ shipments. Consider immediate volume offloading.
+Analytical Model Deep-Dive
+Top 10 Highest Risk Shipments
+Full Shipment Preview
+utf-8
+risk_dataset.csv
+text/csv
+Accuracy
+73.39%
+ROC AUC
+0.811
+Precision (Failing)
+0.69
+Recall (Failing)
+0.79
+F1 Score
+0.74
+The model was generated using a VotingClassifier stacking HistGradientBoosting and RandomForest algorithms.
+Live Control Tower & NSL Monitoring
+IST_svc_commit_dt
+Temporal Engine Active. Simulating current operational time as: **
+**
+Remaining_Time_Sec
+SLA_Status
+Filter by SLA Status
+Filter by Region
+Operational SLA Board
+Tactical Unit Level Prediction & Root Cause
+Shipment not found in uploaded batch.
+Predicted Failure Risk
+Model Confidence / Danger Level
+The AI mathematically isolated why this specific package is evaluated this way based on its context:
+Calculating SHAP mathematical impacts...
+Feature
+SHAP Impact
+Absolute Impact
+h
+Top 5 Determining Factors (Local Interpretation)
+RdBu_r
+SHAP Root Cause generation aborted natively. (Error: 
+).
+Note: Ensembled Classifiers (Voting) natively block DeepTree Explainers. A surrogate explainer requires intensive memory.

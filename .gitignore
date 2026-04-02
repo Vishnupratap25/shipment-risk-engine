@@ -1,0 +1,24 @@
+# Python Bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Streamlit Local Files
+.streamlit/
+
+# OS Specific Files
+.DS_Store
+Thumbs.db
+
+# Large Data Files (Not needed if app asks for user upload)
+final_merged_dataset.csv
+converted_dataset.tsv
+*.csv
+*.tsv
+
+# Do NOT ignore the required mapping excel file
+!loc region.xlsx
+
+# Artifacts/Gemini folders
+.gemini/
