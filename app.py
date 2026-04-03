@@ -730,7 +730,7 @@ if uploaded_file:
                     status_list.append("Critical")
                 elif sec < 6 * 3600:
                     status_list.append("Warning")
-                elif risk >= 90:
+                elif risk >= 80:
                     status_list.append("Warning")
                 else:
                     status_list.append("Safe")
@@ -894,7 +894,7 @@ if uploaded_file:
                     yaxis_title="Number of Shipments",
                     legend_title="Shipment Status",
                     template="plotly_dark"
-                )
+                 )
 
                 st.plotly_chart(fig, use_container_width=True)
 
@@ -1024,7 +1024,7 @@ if uploaded_file:
                         sla_status = "Critical"
                     elif remaining_seconds < 6 * 3600:
                         sla_status = "Warning"
-                    elif risk_pct >= 90:
+                    elif risk_pct >= 80:
                         sla_status = "Warning"
                     else:
                         sla_status = "Safe"
