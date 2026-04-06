@@ -184,12 +184,24 @@ div.stSelect > div {
     background-color: #FFFFFF !important;
     color: #1F2937 !important;
 }
-/* Ensure alerts/notifications don't turn white on hover */
-div[data-testid="stNotification"], div.stAlert {
-    transition: none !important;
+/* 10. EXPANDER (DROPDOWN) STYLING */
+div[data-testid="stExpander"] {
+    background-color: rgba(22, 27, 34, 0.2) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 12px !important;
 }
-div[data-testid="stNotification"]:hover, div.stAlert:hover {
-    background-color: inherit !important;
+div[data-testid="stExpander"] details summary {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+    color: #FFFFFF !important;
+    padding: 10px 15px !important;
+    border-radius: 12px !important;
+}
+div[data-testid="stExpander"] details summary:hover {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    color: #FF6200 !important; /* Highlights FedEx Orange on hover */
+}
+div[data-testid="stExpander"] details summary svg {
+    fill: #FFFFFF !important;
 }
 </style>
 """, unsafe_allow_html=True)
