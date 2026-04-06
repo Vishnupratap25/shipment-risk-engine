@@ -377,6 +377,113 @@ def load_file(file, name):
 # ==============================
 # FRONTEND EXECUTION START
 # ==============================
+
+# ==============================
+# SMART OPERATIONAL CORE (AI ASSISTANT)
+# ==============================
+def calculate_sla_status_df(df, current_time):
+    """
+    Centralized logic to compute SLA Status (Breached, Critical, etc.)
+    """
+    df = df.copy()
+    if "IST_svc_commit_tmstp" not in df.columns:
+        return df
+
+    temp_td = df["IST_svc_commit_tmstp"] - current_time
+    df["Remaining_Seconds"] = temp_td.dt.total_seconds()
+
+    status_list = []
+    for _, row in df.iterrows():
+        sec = row.get("Remaining_Seconds", 0)
+        risk = row.get("Failure_Risk_%", 0)
+        status_value = str(row.get("Status", "")).lower().strip()
+        location_type = str(row.get("Location_Type", "")).lower()
+        region = str(row.get("Region", "")).upper()
+
+        if status_value == "ontime": status_list.append("Delivered")
+        elif status_value in ["commit_fail", "pod_commit_fail"]: status_list.append("Breached")
+        elif pd.isna(sec): status_list.append("Unknown")
+        elif sec < 0: status_list.append("Breached")
+        elif location_type == "ramp" and sec < 48 * 3600: status_list.append("Critical")
+        elif region == "INTERNATIONAL" and sec < 24 * 3600: status_list.append("Critical")
+        elif sec < 2 * 3600: status_list.append("Critical")
+        elif sec < 6 * 3600 and risk >= 60: status_list.append("Critical")
+        elif sec < 6 * 3600: status_list.append("Warning")
+        elif risk >= 70: status_list.append("Warning")
+        else: status_list.append("Safe")
+    
+    df["SLA_Status"] = status_list
+    return df
+
+def smart_insights_engine(query, df):
+    """
+    NLP Logic Engine for Operational Intelligence
+    """
+    q = str(query).lower()
+    
+    # 1. TOP RISKS
+    if any(x in q for x in ["top", "highest", "most risky", "risk", "critical"]):
+        top_5 = df.nlargest(5, "Failure_Risk_%")
+        count = len(df[df["SLA_Status"]=="Critical"])
+        res = f"📍 Found **{count}** Critical shipments currently active.\n\n"
+        res += "Top 5 High-Risk Tracking Numbers:\n"
+        for _, r in top_5.iterrows():
+            res += f"- `{r['Trk Nos']}`: **{r['Failure_Risk_%']:.1f}%** ({r['SLA_Status']})\n"
+        return res
+
+    # 2. HUB DELAYS
+    elif any(x in q for x in ["hub", "station", "loc", "delayed", "delay"]):
+        breaches = df[df["SLA_Status"]=="Breached"]
+        if breaches.empty:
+            return "✅ No current breaches found across any hubs."
+        
+        hub_stats = breaches.groupby("Dest Loc").size().nlargest(1)
+        hub_name = hub_stats.index[0]
+        cnt = hub_stats.values[0]
+        return f"🚨 **Hub Bottleneck Alert:** Hub `{hub_name}` has the most delays right now with **{cnt}** breached shipments. Recommendation: Inspect inbound processing at `{hub_name}`."
+
+    # 3. REGIONAL BREAKDOWN
+    elif any(x in q for x in ["region", "north", "south", "west", "summary"]):
+        stats = df.groupby("Region")["SLA_Status"].apply(lambda x: (x=="Breached").sum()).to_dict()
+        res = "🌍 **Regional Health Summary (Current Breaches):**\n"
+        for reg, val in stats.items():
+            icon = "🔴" if val > 0 else "🟢"
+            res += f"- {icon} {reg}: {val} delays\n"
+        return res
+
+    # 4. RAMP SCAN SPECIFIC
+    elif "ramp" in q:
+        ramp_critical = df[(df["Location_Type"]=="ramp") & (df["SLA_Status"]=="Critical")]
+        return f"🏗️ **Ramp Operations:** There are **{len(ramp_critical)}** critical shipments currently sitting at Ramps. These require immediate prioritized loading."
+
+    # DEFAULT
+    return "💡 I can help you find: **Top Risks**, **Hub Delays**, or **Regional Summaries**. Try asking: 'Which hub has most delays?'"
+
+def render_sidebar_ai(df):
+    with st.sidebar:
+        st.divider()
+        st.subheader("🧠 Ask the Control Tower")
+        st.caption("Real-Time Operational AI Assistant")
+
+        if "messages" not in st.session_state:
+            st.session_state.messages = []
+
+        # Display history
+        for msg in st.session_state.messages:
+            with st.chat_message(msg["role"]):
+                st.markdown(msg["content"])
+
+        if prompt := st.chat_input("Query: e.g. Hub delays?"):
+            st.session_state.messages.append({"role": "user", "content": prompt})
+            with st.chat_message("user"):
+                # Clear previous render if needed, but chat_input handles display
+                st.markdown(prompt)
+
+            with st.chat_message("assistant", avatar="🤖"):
+                response = smart_insights_engine(prompt, df)
+                st.markdown(response)
+                st.session_state.messages.append({"role": "assistant", "content": response})
+
 st.markdown("### 📥 Secure Data Upload Portal")
 uploaded_file = st.file_uploader("Upload Operational Shipment File (CSV / Excel / TSV)", type=["csv", "xlsx", "tsv"])
 
@@ -722,50 +829,21 @@ if uploaded_file:
 
             filtered_df["Time_Remaining"] = filtered_df["Remaining_Seconds"].apply(global_format_time)
 
-            sla_df = filtered_df.copy()
-            filtered_df.drop(columns=["Remaining_Seconds"], inplace=True, errors="ignore")
-
-            status_list = []
-
-            for _, row in sla_df.iterrows():
-                sec = row["Remaining_Seconds"]
-                risk = row["Failure_Risk_%"]
-
-                status_value = str(row.get("Status", "")).lower().strip()
-                location_type = str(row.get("Location_Type", "")).lower()
-                region = str(row.get("Region", "")).upper()
-
-                if status_value == "ontime":
-                    status_list.append("Delivered")
-                elif status_value in ["commit_fail", "pod_commit_fail"]:
-                    status_list.append("Breached")
-                elif sec < 0:
-                    status_list.append("Breached")
-                elif pd.isna(sec):
-                    status_list.append("Unknown")
-                elif location_type == "ramp" and sec < 48 * 3600:
-                    status_list.append("Critical")
-                elif region == "INTERNATIONAL" and sec < 24 * 3600:
-                    status_list.append("Critical")
-                elif sec < 2 * 3600:
-                    status_list.append("Critical")
-                elif sec < 6 * 3600 and risk >= 60:
-                    status_list.append("Critical")
-                elif sec < 6 * 3600:
-                    status_list.append("Warning")
-                elif risk >= 70:
-                    status_list.append("Warning")
-                else:
-                    status_list.append("Safe")
-
-            sla_df["SLA_Status"] = status_list
+            # --- CENTRALIZED SLA STATUS LOGIC ---
+            sla_df = calculate_sla_status_df(filtered_df, current_time)
+            
+            # Additional UI cleanup for Tab 3 table
+            display_table = filtered_df.copy()
+            display_table.drop(columns=["Remaining_Seconds"], inplace=True, errors="ignore")
 
             sla_df["SLA_Urgency"] = sla_df["Remaining_Seconds"].apply(
                 lambda x: 1 if x < 0 else 1 / (x/3600 + 1)
             )
-
             sla_df["Priority_Score"] = sla_df["Failure_Risk_%"] * sla_df["SLA_Urgency"]
             sla_df = sla_df.sort_values("Priority_Score", ascending=False)
+
+            # RENDER AI SIDEBAR (Uses the already calculated sla_df)
+            render_sidebar_ai(sla_df)
 
             breach_count = (sla_df["SLA_Status"]=="Breached").sum()
             critical_count = (sla_df["SLA_Status"]=="Critical").sum()
