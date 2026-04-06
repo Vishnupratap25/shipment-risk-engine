@@ -902,7 +902,7 @@ if uploaded_file:
                 st.plotly_chart(fig, use_container_width=True)
 
             st.divider()
-            st.subheader("📊 Full Shipment SLA Monitor")
+            st.subheader("📊 Full Shipment NSL Monitor")
 
             table_df = sla_df.copy()
 
@@ -915,6 +915,7 @@ if uploaded_file:
 
             cols = [
                 "Trk Nos",
+                "IST_svc_commit_tmstp",
                 "Remaining Time",
                 "Failure_Risk_%",
                 "SLA_Status",
