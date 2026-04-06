@@ -979,17 +979,42 @@ if uploaded_file:
             st.divider()
             with st.expander("ℹ️ **How are these Statuses Calculated? (System Logic Key)**", expanded=False):
                 st.markdown("""
-                ### 🧠 NSL Model Classification Logic
-                This dashboard uses an intelligent hybrid engine that combines **Real-Time Logistics Commitment (SLA)** with **AI-Powered Failure Risk %**. 
-
-                | Status | Definition & Thresholds |
-                | :--- | :--- |
-                | 🔵 **Delivered** | Shipment has already reached its final destination (On-Time). |
-                | 🔴 **Breached** | Shipment has missed its commitment or the status is confirmed as 'commit_fail'. |
-                | 💥 **Critical** | **Immediate Tactical Action Required.** <br> • *Ramp Scan:* < 48 hours remaining <br> • *International:* < 24 hours remaining <br> • *Any:* < 2 hours remaining <br> • *AI Risk:* < 6 hours remaining AND **Failure Risk ≥ 70%** |
-                | 🟠 **Warning** | **Pre-emptive Monitoring Required.** <br> • *Deadline:* < 6 hours remaining <br> • *AI Risk:* **Failure Risk ≥ 80%** regardless of time. |
-                | 🟢 **Safe** | Shipment is currently on-track based on both time and AI risk evaluation. |
-                """)
+                <h3 style='margin-bottom: 20px;'>🧠 NSL Model Classification Logic</h3>
+                <p style='color: #CBD5E1; margin-bottom: 25px;'>This dashboard uses an intelligent hybrid engine that combines <b>Real-Time Logistics Commitment (SLA)</b> with <b>AI-Powered Failure Risk %</b>.</p>
+                
+                <div style='display: flex; flex-direction: column; gap: 15px;'>
+                    <div style='background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border-left: 5px solid #3B82F6;'>
+                        <span style='font-size: 1.1rem; color: #60A5FA;'>🔵 Delivered</span>
+                        <p style='margin: 5px 0 0 0; color: #E2E8F0; font-size: 0.95rem;'>Shipment has already reached its final destination (On-Time).</p>
+                    </div>
+                    <div style='background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border-left: 5px solid #F87171;'>
+                        <span style='font-size: 1.1rem; color: #F87171;'>🔴 Breached</span>
+                        <p style='margin: 5px 0 0 0; color: #E2E8F0; font-size: 0.95rem;'>Shipment has missed its commitment or the status is confirmed as 'commit_fail'.</p>
+                    </div>
+                    <div style='background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border-left: 5px solid #EF4444;'>
+                        <span style='font-size: 1.1rem; color: #EF4444;'>💥 Critical</span>
+                        <p style='margin: 5px 0 0 0; color: #E2E8F0; font-size: 0.95rem; line-height: 1.6;'>
+                            <b>Immediate Tactical Action Required.</b><br>
+                            • <b>Ramp Scan:</b> < 48 hours remaining<br>
+                            • <b>International:</b> < 24 hours remaining<br>
+                            • <b>Any:</b> < 2 hours remaining<br>
+                            • <b>AI Risk:</b> < 6 hours remaining AND <b>Failure Risk ≥ 70%</b>
+                        </p>
+                    </div>
+                    <div style='background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border-left: 5px solid #F59E0B;'>
+                        <span style='font-size: 1.1rem; color: #F59E0B;'>🟠 Warning</span>
+                        <p style='margin: 5px 0 0 0; color: #E2E8F0; font-size: 0.95rem;'>
+                            <b>Pre-emptive Monitoring Required.</b><br>
+                            • <b>Deadline:</b> < 6 hours remaining<br>
+                            • <b>AI Risk:</b> <b>Failure Risk ≥ 80%</b> regardless of time remaining.
+                        </p>
+                    </div>
+                    <div style='background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border-left: 5px solid #22C55E;'>
+                        <span style='font-size: 1.1rem; color: #22C55E;'>🟢 Safe</span>
+                        <p style='margin: 5px 0 0 0; color: #E2E8F0; font-size: 0.95rem;'>Shipment is currently on-track based on both time and AI risk evaluation.</p>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
 
         except Exception:
             st.info("SLA monitoring unavailable for this dataset.")
