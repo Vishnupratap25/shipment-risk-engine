@@ -974,6 +974,22 @@ if uploaded_file:
             st.dataframe(display_table,use_container_width=True)
 
             st.write(f"Showing **{len(display_table)} shipments**")
+            
+            # --- New Logic Legend Section ---
+            st.divider()
+            with st.expander("ℹ️ **How are these Statuses Calculated? (System Logic Key)**", expanded=False):
+                st.markdown("""
+                ### 🧠 NSL Model Classification Logic
+                This dashboard uses an intelligent hybrid engine that combines **Real-Time Logistics Commitment (SLA)** with **AI-Powered Failure Risk %**. 
+
+                | Status | Definition & Thresholds |
+                | :--- | :--- |
+                | 🔵 **Delivered** | Shipment has already reached its final destination (On-Time). |
+                | 🔴 **Breached** | Shipment has missed its commitment or the status is confirmed as 'commit_fail'. |
+                | 💥 **Critical** | **Immediate Tactical Action Required.** <br> • *Ramp Scan:* < 48 hours remaining <br> • *International:* < 24 hours remaining <br> • *Any:* < 2 hours remaining <br> • *AI Risk:* < 6 hours remaining AND **Failure Risk ≥ 70%** |
+                | 🟠 **Warning** | **Pre-emptive Monitoring Required.** <br> • *Deadline:* < 6 hours remaining <br> • *AI Risk:* **Failure Risk ≥ 80%** regardless of time. |
+                | 🟢 **Safe** | Shipment is currently on-track based on both time and AI risk evaluation. |
+                """)
 
         except Exception:
             st.info("SLA monitoring unavailable for this dataset.")
