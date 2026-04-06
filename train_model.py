@@ -273,7 +273,7 @@ def main():
     drop_cols = [
         status_col.lower() if status_col else "", "target", "target_binary", "ist_svc_commit_tmstp",
         "time_diff_hours", "last_scan", "time_remaining_commit", "last scan date time", "last scan loc", 
-        "trk nos", "dest loc", "cntry_cd", "map", "emp nos"
+        "trk nos", "dest loc", "cntry_cd", "map", "emp nos", "shp_pce_qty", "qty_bins"
     ]
     drop_cols = [c for c in drop_cols if c]
 

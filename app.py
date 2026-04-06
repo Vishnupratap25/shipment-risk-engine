@@ -287,15 +287,8 @@ def process_data(df_raw, bundle):
     if pstl_col in df.columns:
         df["postal_zone"] = df[pstl_col].astype(str).str[:3]
         
-    qty_col = header_map.get('shp_pce_qty', 'shp_pce_qty')
-    if qty_col in df.columns:
-        qty_s = pd.to_numeric(df[qty_col], errors="coerce").fillna(1.0)
-        df["qty_bins"] = pd.cut(
-            qty_s,
-            bins=[0, 1, 3, 10, 50, 999999],
-            labels=['1', '2-3', '4-10', '11-50', '50+'],
-            right=True
-        ).astype(str)
+    # SHP_PCE_QTY is now excluded from the model brain to prevent overfitting on data errors.
+    # We keep the raw data in df_raw for UI display purposes as requested.
 
     scan_col = header_map.get('last_scan', 'last_scan')
     if scan_col in df.columns:
