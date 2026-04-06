@@ -874,7 +874,15 @@ if uploaded_file:
 
             if "Location_Type" in sla_df.columns:
 
-                sla_df["Region"] = sla_df["Region"].replace({"INTERNATIONAL": "OTHER"})
+                # Rename regions for better UI display and order
+                region_map = {
+                    "INTERNATIONAL": "Not Arrived", 
+                    "OTHER": "Not Arrived", 
+                    "NORTH": "North", 
+                    "SOUTH": "South", 
+                    "WEST": "West"
+                }
+                sla_df["Region"] = sla_df["Region"].replace(region_map)
 
                 trend_df = (
                     sla_df
@@ -889,6 +897,7 @@ if uploaded_file:
                     y="Shipment_Count",
                     color="SLA_Status",
                     facet_col="Region",
+                    category_orders={"Region": ["Not Arrived", "North", "West", "South"]},
                     barmode="stack",
                     title="Shipment Trend by Location Type and Region",
                     color_discrete_map={
@@ -906,6 +915,9 @@ if uploaded_file:
                     legend_title="Shipment Status",
                     template="plotly_dark"
                  )
+
+                # Remove "Region=" prefix from facet titles
+                fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
 
                 st.plotly_chart(fig, use_container_width=True)
 
