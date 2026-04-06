@@ -308,7 +308,7 @@ def process_data(df_raw, bundle):
     return df
 
 def categorize_risk(p):
-    if p>=50: return "High Risk"
+    if p>=60: return "High Risk"
     elif p>=30: return "Medium Risk"
     else: return "Low Risk"
 
@@ -737,11 +737,11 @@ if uploaded_file:
                     status_list.append("Critical")
                 elif sec < 2 * 3600:
                     status_list.append("Critical")
-                elif sec < 6 * 3600 and risk >= 70:
+                elif sec < 6 * 3600 and risk >= 60:
                     status_list.append("Critical")
                 elif sec < 6 * 3600:
                     status_list.append("Warning")
-                elif risk >= 80:
+                elif risk >= 70:
                     status_list.append("Warning")
                 else:
                     status_list.append("Safe")
@@ -998,7 +998,7 @@ if uploaded_file:
                             • <b>Ramp Scan:</b> < 48 hours remaining<br>
                             • <b>International:</b> < 24 hours remaining<br>
                             • <b>Any:</b> < 2 hours remaining<br>
-                            • <b>AI Risk:</b> < 6 hours remaining AND <b>Failure Risk ≥ 70%</b>
+                            • <b>AI Risk:</b> < 6 hours remaining AND <b>Failure Risk ≥ 60%</b>
                         </p>
                     </div>
                     <div style='background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border-left: 5px solid #F59E0B;'>
@@ -1006,7 +1006,7 @@ if uploaded_file:
                         <p style='margin: 5px 0 0 0; color: #E2E8F0; font-size: 0.95rem;'>
                             <b>Pre-emptive Monitoring Required.</b><br>
                             • <b>Deadline:</b> < 6 hours remaining<br>
-                            • <b>AI Risk:</b> <b>Failure Risk ≥ 80%</b> regardless of time remaining.
+                            • <b>AI Risk:</b> <b>Failure Risk ≥ 70%</b> regardless of time remaining.
                         </p>
                     </div>
                     <div style='background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border-left: 5px solid #22C55E;'>
@@ -1014,7 +1014,27 @@ if uploaded_file:
                         <p style='margin: 5px 0 0 0; color: #E2E8F0; font-size: 0.95rem;'>Shipment is currently on-track based on both time and AI risk evaluation.</p>
                     </div>
                 </div>
+
+                <h3 style='margin-top: 30px; margin-bottom: 20px;'>🤖 AI Model Risk Categories</h3>
+                <p style='color: #CBD5E1; margin-bottom: 25px;'>The AI engine calculates a raw probability of failure (0-100%). These probabilities are grouped into the categories seen across the dashboard:</p>
+                
+                <div style='display: flex; flex-direction: column; gap: 15px;'>
+                    <div style='background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border-left: 5px solid #EF4444;'>
+                        <span style='font-size: 1.1rem; color: #EF4444;'>🔴 High Risk</span>
+                        <p style='margin: 5px 0 0 0; color: #E2E8F0; font-size: 0.95rem;'><b>60% to 100%</b> probability of missing the service commitment.</p>
+                    </div>
+                    <div style='background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border-left: 5px solid #F59E0B;'>
+                        <span style='font-size: 1.1rem; color: #F59E0B;'>🟠 Medium Risk</span>
+                        <p style='margin: 5px 0 0 0; color: #E2E8F0; font-size: 0.95rem;'><b>30% to 60%</b> probability of missing the service commitment.</p>
+                    </div>
+                    <div style='background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border-left: 5px solid #22C55E;'>
+                        <span style='font-size: 1.1rem; color: #22C55E;'>🟢 Low Risk</span>
+                        <p style='margin: 5px 0 0 0; color: #E2E8F0; font-size: 0.95rem;'><b>0% to 30%</b> probability of missing the service commitment.</p>
+                    </div>
+                </div>
                 """, unsafe_allow_html=True)
+                
+                st.markdown("<br><p style='font-size: 0.8rem; color: #64748B;'>*Note: The final 'Status' (Critical vs Warning) takes precedence over these AI categories as it also considers time remaining.</p>", unsafe_allow_html=True)
 
         except Exception:
             st.info("SLA monitoring unavailable for this dataset.")
@@ -1099,11 +1119,11 @@ if uploaded_file:
                         sla_status = "Critical"
                     elif remaining_seconds < 2 * 3600:
                         sla_status = "Critical"
-                    elif remaining_seconds < 6 * 3600 and risk_pct >= 70:
+                    elif remaining_seconds < 6 * 3600 and risk_pct >= 60:
                         sla_status = "Critical"
                     elif remaining_seconds < 6 * 3600:
                         sla_status = "Warning"
-                    elif risk_pct >= 80:
+                    elif risk_pct >= 70:
                         sla_status = "Warning"
                     else:
                         sla_status = "Safe"
