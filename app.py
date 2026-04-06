@@ -417,12 +417,42 @@ def calculate_sla_status_df(df, current_time):
 
 def smart_insights_engine(query, df):
     """
-    NLP Logic Engine for Operational Intelligence
+    Refined NLP Logic Engine for Operational Intelligence
     """
     q = str(query).lower()
     
-    # 1. TOP RISKS
-    if any(x in q for x in ["top", "highest", "most risky", "risk", "critical"]):
+    # 1. DELIVERED / COMPLETED COUNT (REGIONAL)
+    if any(x in q for x in ["delivered", "complete", "done"]):
+        status_df = df[df["SLA_Status"]=="Delivered"]
+        region_context = None
+        for r in ["north", "south", "west", "international"]:
+            if r in q:
+                region_context = r.upper()
+                break
+        
+        if region_context:
+            count = len(status_df[status_df["Region"]==region_context])
+            return f"✅ **{region_context} Region:** There are currently **{count}** shipments successfully delivered."
+        else:
+            count = len(status_df)
+            return f"✅ **Total Delivered:** Across all regions, **{count}** shipments have been successfully delivered."
+
+    # 2. CITY / HUB VOLUME (LOWEST/HIGHEST)
+    elif "city" in q or "hub" in q:
+        stats = df.groupby("Dest Loc").size()
+        if any(x in q for x in ["lowest", "least", "minimum"]):
+            city = stats.idxmin()
+            val = stats.min()
+            return f"📉 **Lowest Volume City:** Hub `{city}` currently has the least activity with only **{val}** shipments."
+        elif any(x in q for x in ["highest", "most", "maximum", "busy"]):
+            city = stats.idxmax()
+            val = stats.max()
+            return f"📈 **Highest Volume City:** Hub `{city}` is the busiest right now with **{val}** total shipments."
+        else:
+            return f"📊 **Network Overview:** We are monitoring **{len(stats)}** unique cities/hubs in this dataset."
+
+    # 3. TOP RISKS (REFINED)
+    elif any(x in q for x in ["top", "highest", "most risky", "risk", "critical"]):
         top_5 = df.nlargest(5, "Failure_Risk_%")
         count = len(df[df["SLA_Status"]=="Critical"])
         res = f"📍 Found **{count}** Critical shipments currently active.\n\n"
@@ -431,19 +461,19 @@ def smart_insights_engine(query, df):
             res += f"- `{r['Trk Nos']}`: **{r['Failure_Risk_%']:.1f}%** ({r['SLA_Status']})\n"
         return res
 
-    # 2. HUB DELAYS
-    elif any(x in q for x in ["hub", "station", "loc", "delayed", "delay"]):
+    # 4. HUB DELAYS (REFINED)
+    elif any(x in q for x in ["delayed", "breach", "fail"]):
         breaches = df[df["SLA_Status"]=="Breached"]
         if breaches.empty:
             return "✅ No current breaches found across any hubs."
         
-        hub_stats = breaches.groupby("Dest Loc").size().nlargest(1)
+        hub_stats = breaches.groupby("Dest_Loc" if "Dest_Loc" in df.columns else "Dest Loc").size().nlargest(1)
         hub_name = hub_stats.index[0]
         cnt = hub_stats.values[0]
         return f"🚨 **Hub Bottleneck Alert:** Hub `{hub_name}` has the most delays right now with **{cnt}** breached shipments. Recommendation: Inspect inbound processing at `{hub_name}`."
 
-    # 3. REGIONAL BREAKDOWN
-    elif any(x in q for x in ["region", "north", "south", "west", "summary"]):
+    # 5. REGIONAL HEALTH SUMMARY
+    elif any(x in q for x in ["region", "summary", "health"]):
         stats = df.groupby("Region")["SLA_Status"].apply(lambda x: (x=="Breached").sum()).to_dict()
         res = "🌍 **Regional Health Summary (Current Breaches):**\n"
         for reg, val in stats.items():
@@ -451,13 +481,16 @@ def smart_insights_engine(query, df):
             res += f"- {icon} {reg}: {val} delays\n"
         return res
 
-    # 4. RAMP SCAN SPECIFIC
+    # 6. RAMP SCAN SPECIFIC
     elif "ramp" in q:
         ramp_critical = df[(df["Location_Type"]=="ramp") & (df["SLA_Status"]=="Critical")]
         return f"🏗️ **Ramp Operations:** There are **{len(ramp_critical)}** critical shipments currently sitting at Ramps. These require immediate prioritized loading."
 
-    # DEFAULT
-    return "💡 I can help you find: **Top Risks**, **Hub Delays**, or **Regional Summaries**. Try asking: 'Which hub has most delays?'"
+    # DEFAULT / HOW MANY
+    elif "how many" in q or "count" in q:
+        return f"📋 **Fleet Summary:** I am currently monitoring **{len(df)}** total shipments. You can ask for 'Delivered count', 'High risks', or 'Hub delays'."
+
+    return "💡 I can help you find: **Top Risks**, **Hub Delays**, **City Volumes**, or **Delivered Counts**. Try asking: 'Which city has lowest volume?'"
 
 def render_sidebar_ai(df):
     with st.sidebar:
