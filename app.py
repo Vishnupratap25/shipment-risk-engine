@@ -926,6 +926,9 @@ if uploaded_file:
                     legend_title="Shipment Status",
                     template="plotly_dark"
                  )
+                
+                # Decouple X-axes to hide empty categories in each facet (especially Not Arrived)
+                fig.update_xaxes(matches=None, showticklabels=True)
 
                 # Remove "Region=" prefix from facet titles
                 fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
