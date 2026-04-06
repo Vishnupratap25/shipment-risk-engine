@@ -685,7 +685,7 @@ if uploaded_file:
                 filtered_df["IST_svc_commit_tmstp"], errors="coerce"
             )
 
-            current_time = pd.Timestamp.now()
+            current_time = pd.Timestamp.now() + pd.Timedelta(hours=5, minutes=30)
 
             temp_td = filtered_df["IST_svc_commit_tmstp"] - current_time
             filtered_df["Remaining_Seconds"] = temp_td.dt.total_seconds()
@@ -997,7 +997,7 @@ if uploaded_file:
                             errors="coerce"
                         )
 
-                        current_time = pd.Timestamp.now()
+                        current_time = pd.Timestamp.now() + pd.Timedelta(hours=5, minutes=30)
 
                         if pd.notna(commit_time):
                             remaining_seconds = (commit_time - current_time).total_seconds()
