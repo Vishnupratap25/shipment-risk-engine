@@ -890,6 +890,11 @@ if uploaded_file:
                     .size()
                     .reset_index(name="Shipment_Count")
                 )
+                
+                # Add percentages per (Region, Location_Type) stack
+                group_totals = trend_df.groupby(["Region", "Location_Type"])["Shipment_Count"].transform("sum")
+                trend_df["Percentage"] = (trend_df["Shipment_Count"] / group_totals * 100).round(1)
+                trend_df["Label"] = trend_df.apply(lambda x: f"{int(x['Shipment_Count']):,} ({x['Percentage']}%)" if x["Shipment_Count"] > 0 else "", axis=1)
 
                 fig = px.bar(
                     trend_df,
@@ -897,6 +902,7 @@ if uploaded_file:
                     y="Shipment_Count",
                     color="SLA_Status",
                     facet_col="Region",
+                    text="Label",
                     category_orders={"Region": ["Not Arrived", "North", "West", "South"]},
                     barmode="stack",
                     title="Shipment Trend by Location Type and Region",
@@ -908,6 +914,8 @@ if uploaded_file:
                         "Delivered": "#3B82F6"
                     }
                 )
+                
+                fig.update_traces(textposition='inside', textfont_size=10)
 
                 fig.update_layout(
                     xaxis_title="Location Type",
