@@ -585,9 +585,17 @@ if uploaded_file:
             city_summary_filtered = city_summary[city_summary["Total_Shipments"] >= 10]
             top_risk_cities = city_summary_filtered.sort_values("High_Risk_Shipments", ascending=False).head(10)
             
-            fig_top = px.bar(top_risk_cities, x=city_col, y=["High_Risk_Shipments", "Medium_Risk_Shipments", "Low_Risk_Shipments"],
+            # Prepare melted data for better label control (adding percentages)
+            melt_cols = ["High_Risk_Shipments", "Medium_Risk_Shipments", "Low_Risk_Shipments"]
+            df_melt = top_risk_cities.melt(id_vars=[city_col, "Total_Shipments"], value_vars=melt_cols, var_name="Risk_Status", value_name="Count")
+            df_melt["Percentage"] = (df_melt["Count"] / df_melt["Total_Shipments"] * 100).round(1)
+            df_melt["Label"] = df_melt.apply(lambda x: f"{int(x['Count']):,} ({x['Percentage']}%)" if x["Count"] > 0 else "", axis=1)
+
+            fig_top = px.bar(df_melt, x=city_col, y="Count", color="Risk_Status", text="Label",
                              title="Top 10 Cities Shipment Risk Distribution",
                              color_discrete_map={"High_Risk_Shipments": "#EF4444", "Medium_Risk_Shipments": "#F59E0B", "Low_Risk_Shipments": "#22C55E"})
+            
+            fig_top.update_traces(textposition='inside')
             fig_top.update_layout(barmode="stack", xaxis_title="City", yaxis_title="Number of Shipments", template="plotly_dark")
             st.plotly_chart(fig_top, use_container_width=True)
 
