@@ -884,6 +884,9 @@ if uploaded_file:
                 }
                 sla_df["Region"] = sla_df["Region"].replace(region_map)
 
+                # Consolidate Not Arrived locations since they are uncertain
+                sla_df.loc[sla_df["Region"] == "Not Arrived", "Location_Type"] = "Pending Arrival"
+
                 trend_df = (
                     sla_df
                     .groupby(["Region","Location_Type","SLA_Status"])
