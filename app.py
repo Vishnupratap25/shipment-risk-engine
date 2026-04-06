@@ -196,7 +196,7 @@ div[data-testid="stNotification"]:hover, div.stAlert:hover {
 
 col_logo, col_title = st.columns([1.5, 6])
 with col_logo:
-    st.markdown('<div class="logo-container"><img src="https://upload.wikimedia.org/wikipedia/commons/9/9d/FedEx_Express.svg" width="130"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="logo-container"><img src="https://upload.wikimedia.org/wikipedia/commons/3/33/FedEx_Wordmark.svg" width="150"></div>', unsafe_allow_html=True)
 with col_title:
     st.title("Intelligent Shipment Prioritization Engine")
     st.caption("AI-Powered SLA Breach Risk Dashboard")
