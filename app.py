@@ -1095,6 +1095,31 @@ if uploaded_file:
 
                 st.write(f"Confidence Score: {confidence}/100")
 
+                st.divider()
+                with st.expander("ℹ️ **How is Model Confidence Calculated?**", expanded=False):
+                    st.markdown("""
+                    <h3 style='margin-bottom: 20px;'>🧠 AI Decisiveness Logic</h3>
+                    <p style='color: #CBD5E1; margin-bottom: 25px;'>The confidence score represents how <b>decisive</b> the AI is about its prediction, rather than just the risk itself.</p>
+                    
+                    <div style='display: flex; flex-direction: column; gap: 15px;'>
+                        <div style='background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border-left: 5px solid #22C55E;'>
+                            <span style='font-size: 1.1rem; color: #22C55E;'>🎯 100/100 (Absolute Certainty)</span>
+                            <p style='margin: 5px 0 0 0; color: #E2E8F0; font-size: 0.95rem;'>The AI is mathematically certain (Risk is either 0% or 100%).</p>
+                        </div>
+                        <div style='background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border-left: 5px solid #3B82F6;'>
+                            <span style='font-size: 1.1rem; color: #60A5FA;'>📈 > 50/100 (Decisive Prediction)</span>
+                            <p style='margin: 5px 0 0 0; color: #E2E8F0; font-size: 0.95rem;'>The AI is leaning strongly toward a specific outcome (High or Low Risk).</p>
+                        </div>
+                        <div style='background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border-left: 5px solid #F87171;'>
+                            <span style='font-size: 1.1rem; color: #F87171;'>🎲 0/100 (Maximum Uncertainty)</span>
+                            <p style='margin: 5px 0 0 0; color: #E2E8F0; font-size: 0.95rem;'>The AI is completely unsure (Exactly 50% risk, like a coin toss).</p>
+                        </div>
+                    </div>
+                    <br>
+                    <p style='font-size: 0.8rem; color: #64748B;'>*Calculation: Confidence = |Failure Risk % - 50| × 2</p>
+                    """, unsafe_allow_html=True)
+
+
                 try:
                     st.divider()
                     st.subheader("⏱ SLA Status")
