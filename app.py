@@ -203,7 +203,12 @@ div[data-testid="stExpander"] details summary:hover {
 div[data-testid="stExpander"] details summary svg {
     fill: #FFFFFF !important;
 }
+/* 11. HIDE STREAMLIT BRANDING (WHITE-LABEL) */
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+.stDeployButton {display:none;}
 </style>
+
 """, unsafe_allow_html=True)
 
 col_logo, col_title = st.columns([1.5, 6])
