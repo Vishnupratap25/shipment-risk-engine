@@ -1115,9 +1115,18 @@ if uploaded_file:
                             <p style='margin: 5px 0 0 0; color: #E2E8F0; font-size: 0.95rem;'>The AI is completely unsure (Exactly 50% risk, like a coin toss).</p>
                         </div>
                     </div>
+
+                    <h3 style='margin-top: 30px; margin-bottom: 20px;'>🚀 Why is this Useful?</h3>
+                    <ul style='color: #CBD5E1; line-height: 1.6;'>
+                        <li><b>High Confidence</b>: The AI has seen this pattern many times before. Trust these alerts first.</li>
+                        <li><b>Low Confidence</b>: The AI sees conflicting data. Use your human judgment to verify.</li>
+                        <li><b>Strategic Focus</b>: Prioritize shipments that are both <b>High Risk</b> AND <b>High Confidence</b> for the best operational ROI.</li>
+                    </ul>
+
                     <br>
                     <p style='font-size: 0.8rem; color: #64748B;'>*Calculation: Confidence = |Failure Risk % - 50| × 2</p>
                     """, unsafe_allow_html=True)
+
 
 
                 try:
