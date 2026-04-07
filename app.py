@@ -203,14 +203,16 @@ div[data-testid="stExpander"] details summary:hover {
 div[data-testid="stExpander"] details summary svg {
     fill: #FFFFFF !important;
 }
-/* 11. HIDE STREAMLIT BRANDING (WHITE-LABEL) */
-#MainMenu {visibility: hidden;}
-footer {visibility: hidden;}
-.stDeployButton {display:none;}
-header {visibility: hidden;}
-div[data-testid="stStatusWidget"] {display: none;}
-.status-widget {display: none !important;}
+/* 11. MAXIMUM LOCKDOWN (WHITE-LABEL) */
+[data-testid="stHeader"] {display: none !important;}
+[data-testid="stToolbar"] {display: none !important;}
+[data-testid="stDecoration"] {display: none !important;}
+[data-testid="stStatusWidget"] {display: none !important;}
+#MainMenu {display: none !important;}
+footer {display: none !important;}
+.stAppDeployButton {display: none !important;}
 </style>
+
 
 
 """, unsafe_allow_html=True)
