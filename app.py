@@ -207,7 +207,11 @@ div[data-testid="stExpander"] details summary svg {
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
 .stDeployButton {display:none;}
+header {visibility: hidden;}
+div[data-testid="stStatusWidget"] {display: none;}
+.status-widget {display: none !important;}
 </style>
+
 
 """, unsafe_allow_html=True)
 
